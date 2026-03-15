@@ -7,6 +7,7 @@ Endpoint: GET /
 Result:
 {“endpoint”:”/”,“message”:“Backend is running”,“success”:true}
 
+<<Will test again w-out the placeholder values>>
 Test 2:
 Endpoint: GET /hello
 Result:
