@@ -1,0 +1,16 @@
+Backend Local Test Results
+
+Date: March 15, 2026
+
+Test 1:
+Endpoint: GET /
+Result:
+{“endpoint”:”/”,“message”:“Backend is running”,“success”:true}
+
+Test 2:
+Endpoint: GET /hello
+Result:
+{“database_status”:“connection failed”,“endpoint”:”/hello”,“error”:“Unable to connect to PostgreSQL with the current configuration.”,“message”:“Hello from Flask!”,“success”:false}
+
+Note:
+Temporary placeholder environment variable values were used during local backend development. The actual PostgreSQL connection values will be updated after the Azure infrastructure setup is completed.
