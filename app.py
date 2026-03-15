@@ -7,20 +7,27 @@ load_dotenv()
 
 app = Flask(__name__)
 
+def get_required_env(name):
+    value = os.getenv(name)
+    if not value:
+        raise ValueError(f"Missing environment variable: {name}")
+    return value
+
 def get_db_connection():
     return psycopg2.connect(
-        host=os.getenv("DB_HOST"),
+        host=get_required_env("DB_HOST"),
         port=os.getenv("DB_PORT", "5432"),
-        database=os.getenv("DB_NAME"),
-        user=os.getenv("DB_USER"),
-        password=os.getenv("DB_PASSWORD")
+        database=get_required_env("DB_NAME"),
+        user=get_required_env("DB_USER"),
+        password=get_required_env("DB_PASSWORD")
     )
 
 @app.route("/", methods=["GET"])
 def home():
     return jsonify({
-        "status": "running",
-        "message": "Backend is up"
+        "success": True,
+        "endpoint": "/",
+        "message": "Backend is running"
     }), 200
 
 @app.route("/hello", methods=["GET"])
@@ -34,16 +41,29 @@ def hello():
         conn.close()
 
         return jsonify({
+            "success": True,
+            "endpoint": "/hello",
             "message": "Hello from Flask!",
-            "database": "connected",
+            "database_status": "connected",
             "server_time": str(result[0])
         }), 200
 
-    except Exception as e:
+    except ValueError as e:
         return jsonify({
-            "message": "Hello from Flask!",
-            "database": "connection failed",
+            "success": False,
+            "endpoint": "/hello",
+            "message": "Configuration error",
+            "database_status": "not tested",
             "error": str(e)
+        }), 500
+
+    except Exception:
+        return jsonify({
+            "success": False,
+            "endpoint": "/hello",
+            "message": "Hello from Flask!",
+            "database_status": "connection failed",
+            "error": "Unable to connect to PostgreSQL with the current configuration."
         }), 500
 
 if __name__ == "__main__":
