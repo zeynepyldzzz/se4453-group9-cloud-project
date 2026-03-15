@@ -2,4 +2,4 @@ Flask Documentation
 psycopg2 Documentation
 python-dotenv Documentation
 Course slides
-ChatGPT used for backend planning
+ChatGPT used for the phase of backend planning
