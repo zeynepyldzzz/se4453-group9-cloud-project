@@ -1,0 +1,12 @@
+I developed the backend application using Python Flask.
+
+My responsibilities included:
+- creating the web application
+- implementing the /hello endpoint
+- writing the PostgreSQL connection logic
+- reading configuration from environment variables
+- preparing requirements.txt
+- testing the backend locally
+- improving the API response format
+
+The backend was prepared to integrate with Azure App Service, PostgreSQL, and Key Vault after the final infrastructure values are provided.
