@@ -1,0 +1,11 @@
+python3 -m venv venv
+source venv/bin/activate
+pip install flask psycopg2-binary python-dotenv
+pip freeze > requirements.txt
+python app.py
+curl http://127.0.0.1:8000/
+curl http://127.0.0.1:8000/hello
+git init
+git branch -M main
+git add .
+git commit -m "init backend project with flask"
