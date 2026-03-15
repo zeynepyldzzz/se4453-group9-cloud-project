@@ -1,15 +1,15 @@
-Midterm Project Backend
+##Midterm Project Backend
 
-Overview
+#Overview
 
 This backend application was developed using Python Flask for the midterm project. It provides a simple web service and a /hello endpoint that attempts to connect to a PostgreSQL database.
 
-Tech Stack
+#Tech Stack
 	•	Python
 	•	Flask
 	•	PostgreSQL
 
-Endpoints
+#Endpoints
 
 GET /
 
@@ -35,7 +35,7 @@ Example response:
 “error”: “Unable to connect to PostgreSQL with the current configuration.”
 }
 
-Configuration
+#Configuration
 
 The application reads database configuration from environment variables:
 	•	DB_HOST
