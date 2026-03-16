@@ -9,3 +9,7 @@ psycopg2-binary==2.9.11
 python-dotenv==1.2.1
 Werkzeug==3.1.6
 zipp==3.23.0
+Flask
+python-dotenv
+psycopg2-binary
+gunicorn
