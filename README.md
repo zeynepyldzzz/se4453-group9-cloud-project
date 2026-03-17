@@ -1,51 +1,67 @@
-##Midterm Project Backend
+# SE4453 Midterm Project - Group 9
 
-#Overview
+Flask-based backend with PostgreSQL database and Azure cloud deployment featuring private networking and Key Vault integration.
 
-This backend application was developed using Python Flask for the midterm project. It provides a simple web service and a /hello endpoint that attempts to connect to a PostgreSQL database.
+## Quick Start
 
-#Tech Stack
-	•	Python
-	•	Flask
-	•	PostgreSQL
+### Prerequisites
+- Python 3.8+
+- PostgreSQL (local development) or Azure PostgreSQL
 
-#Endpoints
+### Local Setup
 
-GET /
+1. **Clone & activate virtual environment:**
+   ```bash
+   python -m venv venv
+   venv\Scripts\activate  # Windows
+   ```
 
-Returns the backend status.
+2. **Install dependencies:**
+   ```bash
+   pip install -r requirements.txt
+   ```
 
-Example response:
-{
-“success”: true,
-“endpoint”: “/”,
-“message”: “Backend is running”
-}
+3. **Configure environment:**
+   Copy `.env.example` to `.env` and fill in your database credentials:
+   ```bash
+   cp .env.example .env
+   ```
+   Edit `.env` with your PostgreSQL connection details.
 
-GET /hello
+4. **Run application:**
+   ```bash
+   python app.py
+   ```
+   Flask runs on `http://localhost:8000`
 
-Returns a JSON response showing whether the backend is running and whether the PostgreSQL connection was successful.
+## API Endpoints
 
-Example response:
-{
-“success”: false,
-“endpoint”: “/hello”,
-“message”: “Hello from Flask!”,
-“database_status”: “connection failed”,
-“error”: “Unable to connect to PostgreSQL with the current configuration.”
-}
+| Method | Endpoint | Description | Response |
+|--------|----------|-------------|----------|
+| GET | `/` | Health check | `{"success": true, "message": "Backend is running"}` |
+| GET | `/hello` | DB connectivity test | `{"success": true, "database_status": "connected", "server_time": "..."}` |
 
-#Configuration
+**Error Response:** `{"success": false, "error": "..."}` (HTTP 500 if DB connection fails)
 
-The application reads database configuration from environment variables:
-	•	DB_HOST
-	•	DB_PORT
-	•	DB_NAME
-	•	DB_USER
-	•	DB_PASSWORD
+## Azure Deployment
 
-Temporary placeholder values were used during local development. The actual PostgreSQL values will be updated after the Azure infrastructure setup is completed.
+Resources created:
+- App Service (private)
+- PostgreSQL Database (private, accessed via VM SSH)
+- Key Vault (with private endpoint)
+- Virtual Network & Security Groups
 
-Running the Application
+For full setup instructions, refer to deployment documentation.
 
-Install the required packages with pip install -r requirements.txt, create a .env file, and run the project with python app.py.
+## Tech Stack
+- **Backend:** Flask 3.1.3
+- **Database:** PostgreSQL via psycopg2
+- **Server:** Gunicorn
+- **Config:** python-dotenv
+- **Cloud:** Microsoft Azure
+
+## Development Notes
+- Environment variables defined in `.env` (copy from `.env.example`)
+- Database connection pooling recommended for production
+- Use `APP_ENV=development` for local testing
+   
