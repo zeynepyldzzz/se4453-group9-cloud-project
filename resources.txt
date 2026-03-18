@@ -2,5 +2,4 @@ Flask Documentation
 psycopg2 Documentation
 python-dotenv Documentation
 Course slides
-ChatGPT
-Gemini used for the phase of backend planning
+AI tools such as Claude and ChatGPT
