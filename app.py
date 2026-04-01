@@ -1,42 +1,61 @@
 from flask import Flask, jsonify
-from dotenv import load_dotenv
 import os
 import psycopg2
-
-load_dotenv()
+from azure.identity import DefaultAzureCredential
+from azure.keyvault.secrets import SecretClient
 
 app = Flask(__name__)
 
 
-def get_required_env(name):
+def get_required_env(name: str) -> str:
     value = os.getenv(name)
     if not value:
         raise ValueError(f"Missing environment variable: {name}")
     return value
 
 
+def get_secret_client() -> SecretClient:
+    vault_url = get_required_env("keyvaulturl")
+    credential = DefaultAzureCredential()
+    return SecretClient(vault_url=vault_url, credential=credential)
+
+
+def get_secret_value(secret_name: str) -> str:
+    client = get_secret_client()
+    return client.get_secret(secret_name).value
+
+
 def get_db_connection():
+    db_host = get_secret_value("url")
+    db_user = get_secret_value("username")
+    db_password = get_secret_value("password")
+
     return psycopg2.connect(
-        host=get_required_env("DB_HOST"),
+        host=db_host,
         port=os.getenv("DB_PORT", "5432"),
-        database=get_required_env("DB_NAME"),
-        user=get_required_env("DB_USER"),
-        password=get_required_env("DB_PASSWORD"),
+        dbname=os.getenv("DB_NAME", "postgres"),
+        user=db_user,
+        password=db_password,
+        sslmode="require",
     )
 
 
 @app.route("/", methods=["GET"])
 def home():
-    """Health check endpoint. Returns backend status."""
     return (
-        jsonify({"success": True, "endpoint": "/", "message": "Backend is running"}),
+        jsonify(
+            {
+                "success": True,
+                "endpoint": "/",
+                "message": "Backend is running - KEYVAULT VERSION",
+            }
+        ),
         200,
     )
 
 
 @app.route("/hello", methods=["GET"])
 def hello():
-    """Database connectivity test. Queries current server time from PostgreSQL."""
     try:
         conn = get_db_connection()
         cur = conn.cursor()
@@ -50,37 +69,24 @@ def hello():
                 {
                     "success": True,
                     "endpoint": "/hello",
-                    "message": "Hello from Flask!",
+                    "message": "Hello from Flask with Key Vault!",
                     "database_status": "connected",
                     "server_time": str(result[0]),
+                    "version": "keyvault-v1",
                 }
             ),
             200,
         )
 
-    except ValueError as e:
+    except Exception as e:
         return (
             jsonify(
                 {
                     "success": False,
                     "endpoint": "/hello",
-                    "message": "Configuration error",
-                    "database_status": "not tested",
+                    "message": "Key Vault or database connection failed",
                     "error": str(e),
-                }
-            ),
-            500,
-        )
-
-    except Exception:
-        return (
-            jsonify(
-                {
-                    "success": False,
-                    "endpoint": "/hello",
-                    "message": "Hello from Flask!",
-                    "database_status": "connection failed",
-                    "error": "Unable to connect to PostgreSQL with the current configuration.",
+                    "version": "keyvault-v1",
                 }
             ),
             500,
